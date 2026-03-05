@@ -8,7 +8,7 @@ class FeedBackForm {
   String email;
   String mobile;
 
-  ///HO MESSO LE VARIABILI PUBBLICHE
+  ///HO MESSO LE VARIABILI PUBBLICHE X PROVARE SE VA
 
   // Costruttore: assegna i valori passati alle variabili della classe
   FeedBackForm(

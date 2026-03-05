@@ -12,7 +12,7 @@ class FormController {
 
 
 
-  /*
+  
   void submitForm(FeedBackForm feedBackForm) async {
     try {
       String stringa = URL + feedBackForm.toParams();
@@ -25,8 +25,8 @@ class FormController {
       print(exc);
     }
   }
-  */
-
+  
+/*
   void submitForm(FeedBackForm feedBackForm) async {
   try {
     // Usiamo l'URL con i parametri
@@ -51,9 +51,9 @@ class FormController {
     print("Errore nel controller: $exc");
   }
 }
-
+*/
   
-  /*
+
   void submitCommandForm(FeedBackForm feedBackForm, String cmd) async {
     try {
       String stringa = URL + feedBackForm.cmdParams(cmd);
@@ -67,8 +67,8 @@ class FormController {
       print(exc);
     }
   }
-  */
 
+/*
   void submitCommandForm(FeedBackForm feedBackForm, String cmd) async {
   try {
     // 1. Costruiamo l'URL con il comando (es. ?cmd=create&nome=...)
@@ -88,5 +88,7 @@ class FormController {
   } catch (exc) {
     print("Errore invio: $exc");
   }
+  
 }
+*/
 }
