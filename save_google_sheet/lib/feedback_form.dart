@@ -31,12 +31,12 @@ class FeedBackForm {
   };
 
   String toParams() =>
-      "?nome=$lastName&cognome=$firstName&numerotelefono=$mobile&email=$email";
+      "?nome=$lastName&cognome=$firstName&telefono=$mobile&email=$email";
 
   // Metodo avanzato che aggiunge un parametro di comando (es. "insert" o "update")
   // utile per dire al Google Apps Script quale azione eseguire.
   String cmdParams(String cmd) =>
-      "?cmd=$cmd&nome=$lastName&cognome=$firstName&numerotelefono=$mobile&email=$email";
+      "?cmd=$cmd&nome=$lastName&cognome=$firstName&telefono=$mobile&email=$email";
 
 
 }

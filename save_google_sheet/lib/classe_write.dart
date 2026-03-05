@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
         print(response);
         // Decodifica lo stato della risposta
 
-        var resp = convert.jsonDecode(response);
+        var resp = convert.jsonDecode(response)['ans'];
         //var resp = convert.jsonDecode(response)['status'];
         if (resp == FormController.STATUS_SUCCESS) {
           _showSnackBar("Feedback submitted"); // Successo
@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 20),
               // Pulsante per inviare i dati
               ElevatedButton(
-                onPressed: () => _submitForm(null),
+                onPressed: () => _submitForm('create'),
                 child: const Text("Send data"),
               ),
               const SizedBox(height: 10),

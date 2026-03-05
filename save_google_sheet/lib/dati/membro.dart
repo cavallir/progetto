@@ -1,7 +1,7 @@
 class Member {
-  Member(this.nome, this.cognome, this.email, this.numerotelefono);
+  Member(this.nome, this.cognome, this.email, this.telefono);
   final String nome;
   final String cognome;
   final String email;
-  final String numerotelefono;
+  final String telefono;
 }

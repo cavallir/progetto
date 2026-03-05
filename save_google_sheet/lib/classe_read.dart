@@ -49,7 +49,8 @@ class _MyHomePageState extends State<MyHomePage> {
       Comandi comandi = Comandi("read");
       
       // Effettua la chiamata GET all'URL composto (URL base + parametri del comando)
-      final response = await http.get(Uri.parse(URL + comandi.cmdParams()));
+      final response = await http.get(Uri.parse(URL));
+      //final response = await http.get(Uri.parse(URL + comandi.cmdParams()));
       
       // Notifica a Flutter che i dati sono cambiati per aggiornare l'interfaccia
       setState(() {
@@ -61,11 +62,11 @@ class _MyHomePageState extends State<MyHomePage> {
           // Assegna i valori basandosi sulla posizione delle colonne (0, 1, 2, 3)
           final nome = item["NOME"] as String? ?? '';
           final cognome = item["COGNOME"] as String? ?? '';
-          final numerotelefono = item["TELEFONO"] as String? ?? '';
+          final telefono = item["TELEFONO"] as String? ?? '';
           final email = item["EMAIL"] as String? ?? '';
 
           // Crea un oggetto Member e lo aggiunge alla lista locale
-          final member = Member(nome, cognome, email, numerotelefono);
+          final member = Member(nome, cognome, email, telefono);
           _members.add(member);
         }
       });
@@ -109,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               Icon(Icons.call, size: 36.0, color: Colors.lightGreen),
               const SizedBox(width: 10),
-              Text('${_members[i].numerotelefono}', style: _biggerFont),
+              Text('${_members[i].telefono}', style: _biggerFont),
             ],
           ),
           // Riga Email
