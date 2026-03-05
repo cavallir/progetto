@@ -40,10 +40,14 @@ class _HomePageState extends State<HomePage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
 
+  
+
   // Funzione che raccoglie i dati e li invia al FormController
   void _submitForm(var cmd) {
     // 1. Controlla se il form è valido (tutti i campi compilati correttamente)
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+
+      
       
       // 2. Crea un oggetto FeedBackForm con i dati estratti dai controller
       FeedBackForm feedBackForm = FeedBackForm(
@@ -53,11 +57,16 @@ class _HomePageState extends State<HomePage> {
         emailController.text,
       );
 
+      
+
       // 3. Inizializza il controller che gestirà la chiamata HTTP
       FormController formController = FormController((String response) {
+        
         print(response);
         // Decodifica lo stato della risposta
-        var resp = convert.jsonDecode(response)['status'];
+
+        var resp = convert.jsonDecode(response);
+        //var resp = convert.jsonDecode(response)['status'];
         if (resp == FormController.STATUS_SUCCESS) {
           _showSnackBar("Feedback submitted"); // Successo
         } else {
@@ -100,25 +109,25 @@ class _HomePageState extends State<HomePage> {
               TextFormField(
                 controller: lastNameController,
                 validator: (val) => val!.isEmpty ? "Mettere Nome Valido" : null,
-                decoration: const InputDecoration(hintText: "Nome"),
+                decoration: const InputDecoration(hintText: "NOME"),
               ),
               // Campo di input per il Cognome
               TextFormField(
                 controller: firstNameController,
                 validator: (val) => val!.isEmpty ? "Mettere Cognome Valido" : null,
-                decoration: const InputDecoration(hintText: "Cognome"),
+                decoration: const InputDecoration(hintText: "COGNOME"),
               ),
               // Campo di input per il Telefono
               TextFormField(
                 controller: mobileController,
                 validator: (val) => val!.isEmpty ? "Mettere Numero Telefono Valido" : null,
-                decoration: const InputDecoration(hintText: "Numero Telefono"),
+                decoration: const InputDecoration(hintText: "TELEFONO"),
               ),
               // Campo di input per l'Email
               TextFormField(
                 controller: emailController,
                 validator: (val) => val!.isEmpty ? "Mettere Email Valida" : null,
-                decoration: const InputDecoration(hintText: "Email"),
+                decoration: const InputDecoration(hintText: "EMAIL"),
               ),
               const SizedBox(height: 20),
               // Pulsante per inviare i dati

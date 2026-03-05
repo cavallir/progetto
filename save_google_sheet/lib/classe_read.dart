@@ -57,12 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
         final dataList = json.decode(response.body);
         
         // Cicla attraverso i dati contenuti nella chiave 'data1' (il nome dipende dal tuo script Google)
-        for (final item in dataList['data1']) {
+        for (final item in dataList['anagrafica']) {
           // Assegna i valori basandosi sulla posizione delle colonne (0, 1, 2, 3)
-          final nome = item[0] as String? ?? '';
-          final cognome = item[1] as String? ?? '';
-          final numerotelefono = item[2] as String? ?? '';
-          final email = item[3] as String? ?? '';
+          final nome = item["NOME"] as String? ?? '';
+          final cognome = item["COGNOME"] as String? ?? '';
+          final numerotelefono = item["TELEFONO"] as String? ?? '';
+          final email = item["EMAIL"] as String? ?? '';
 
           // Crea un oggetto Member e lo aggiunge alla lista locale
           final member = Member(nome, cognome, email, numerotelefono);
