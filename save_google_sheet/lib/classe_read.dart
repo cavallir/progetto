@@ -60,13 +60,14 @@ class _MyHomePageState extends State<MyHomePage> {
         // Cicla attraverso i dati contenuti nella chiave 'data1' (il nome dipende dal tuo script Google)
         for (final item in dataList['anagrafica']) {
           // Assegna i valori basandosi sulla posizione delle colonne (0, 1, 2, 3)
+          final id = item["ID"] as String? ?? '0';
           final nome = item["NOME"] as String? ?? '';
           final cognome = item["COGNOME"] as String? ?? '';
           final telefono = item["TELEFONO"] as String? ?? '';
           final email = item["EMAIL"] as String? ?? '';
 
           // Crea un oggetto Member e lo aggiunge alla lista locale
-          final member = Member(nome, cognome, email, telefono);
+          final member = Member(id ,nome, cognome, email, telefono);
           _members.add(member);
         }
       });
@@ -75,6 +76,28 @@ class _MyHomePageState extends State<MyHomePage> {
       print("Errore durante il caricamento: $exc");
     }
   }
+
+  Future<void> _deleteData(String idDelete) async {
+  try {
+    
+    Comandi comandi = Comandi("delete");
+    
+    final urlEliminazione = Uri.parse("$URL${comandi.cmdParams()}&id=$idDelete");
+
+    print("URL FINALE: $urlEliminazione"); 
+    
+    final response = await http.get(urlEliminazione);
+
+    setState(() {
+      // Rimuove dalla lista locale il membro che ha quell'ID
+      _members.removeWhere((member) => member.id == idDelete); 
+    });
+    print("Eliminazione completata con successo");
+    
+  } catch (exc) {
+    print("Errore durante l'eliminazione: $exc");
+  }
+}
 
   // Metodo chiamato automaticamente alla creazione del widget
   @override
@@ -122,9 +145,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
           ElevatedButton(
-                onPressed: () => main(),
+                onPressed: () {
+                 _deleteData(_members[i].id);},
                 //child: const Text("Turn Back"),
-                child: Icon(IconData(0xf71e , fontFamily: 'MaterialIcons')),
+                child: Icon(Icons.delete),
               ),
         ],
         
