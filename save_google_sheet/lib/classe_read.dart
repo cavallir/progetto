@@ -6,6 +6,7 @@ import 'package:save_google_sheet/main.dart'; // Import per poter tornare alla f
 import 'dati/membro.dart'; // Import della classe modello 'Member' (nome, cognome, etc.)
 import 'costanti.dart';    // Qui si trova probabilmente la variabile 'URL' del Google Sheet
 import 'comandi.dart';     // Classe che genera i parametri della query (es. ?action=read)
+import 'package:save_google_sheet/classe_update.dart';
 
 // Funzione di avvio specifica per questa visualizzazione
 void classe_read() {
@@ -150,6 +151,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 //child: const Text("Turn Back"),
                 child: Icon(Icons.delete),
               ),
+          // Nel file classe_read.dart, dentro il metodo _buildRow
+          ElevatedButton(
+            onPressed: () {
+              // Passiamo l'intero oggetto membro alla funzione classe_update
+              classe_update(_members[i] as Member);
+            },
+            child: const Icon(Icons.edit), // Icona matita per la modifica
+          ),
+
         ],
         
       ),
