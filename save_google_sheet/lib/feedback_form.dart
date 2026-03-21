@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 // Definizione della classe modello che rappresenta i dati del modulo
 class FeedBackForm {
   // Variabili private
@@ -21,14 +19,14 @@ class FeedBackForm {
   // Metodo per convertire i dati in parametri URL standard.
   // Esempio: ?nome=Rossi&cognome=Mario&numerotelefono=123&email=a@b.com
 
-///AGGIUNTO DOPO
+  ///AGGIUNTO DOPO
   Map<String, dynamic> toJson() => {
-    'cmd': 'create',
-    'nome': lastName,    // Lo script Google cerca p.parameter.nome
-    'cognome': firstName, // Lo script Google cerca p.parameter.cognome
-    'telefono': mobile,
-    'email': email,
-  };
+        'cmd': 'create',
+        'nome': lastName, // Lo script Google cerca p.parameter.nome
+        'cognome': firstName, // Lo script Google cerca p.parameter.cognome
+        'telefono': mobile,
+        'email': email,
+      };
 
   String toParams() =>
       "?nome=$lastName&cognome=$firstName&telefono=$mobile&email=$email";
@@ -37,6 +35,4 @@ class FeedBackForm {
   // utile per dire al Google Apps Script quale azione eseguire.
   String cmdParams(String cmd) =>
       "?cmd=$cmd&nome=$lastName&cognome=$firstName&telefono=$mobile&email=$email";
-
-
 }

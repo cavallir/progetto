@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
 
 class Comandi {
-  String _cmd;
+  final String _cmd;
 
   Comandi(this._cmd);
 

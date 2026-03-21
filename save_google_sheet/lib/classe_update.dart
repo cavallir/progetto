@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:save_google_sheet/feedback_form.dart'; 
-import 'package:save_google_sheet/main.dart';         
+import 'package:save_google_sheet/feedback_form.dart';
+import 'package:save_google_sheet/main.dart';
 import 'controller.dart';
 import 'dart:convert' as convert;
 import 'dati/membro.dart'; // Importa il modello Member
@@ -26,7 +26,8 @@ class UpdateApp extends StatelessWidget {
 class HomePageUpdate extends StatefulWidget {
   final String title;
   final Member membro;
-  const HomePageUpdate({Key? key, required this.title, required this.membro}) : super(key: key);
+  const HomePageUpdate({Key? key, required this.title, required this.membro})
+      : super(key: key);
 
   @override
   State<HomePageUpdate> createState() => _HomePageUpdateState();
@@ -54,7 +55,6 @@ class _HomePageUpdateState extends State<HomePageUpdate> {
 
   void _submitForm() {
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-      
       FeedBackForm feedBackForm = FeedBackForm(
         lastNameController.text,
         firstNameController.text,
@@ -85,7 +85,8 @@ class _HomePageUpdateState extends State<HomePageUpdate> {
 
   _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), duration: const Duration(milliseconds: 800)),
+      SnackBar(
+          content: Text(message), duration: const Duration(milliseconds: 800)),
     );
   }
 
@@ -102,28 +103,76 @@ class _HomePageUpdateState extends State<HomePageUpdate> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Text("Modifica ID: ${widget.membro.id}", 
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(border: Border.all(width: 1)),
+                  child: Text(
+                    "Modifica ID: ${widget.membro.id}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
               ),
+              const SizedBox(height: 10),
               TextFormField(
+                enableSuggestions: true,
+                keyboardType: TextInputType.name,
                 controller: lastNameController,
                 validator: (val) => val!.isEmpty ? "Mettere Nome Valido" : null,
-                decoration: const InputDecoration(hintText: "NOME"),
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.insert_emoticon_sharp),
+                  hintText: "NOME",
+                  labelText: 'Nome',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    ),
+                  ),
+                ),
               ),
+              const SizedBox(height: 10),
               TextFormField(
+                enableSuggestions: true,
+                keyboardType: TextInputType.name,
                 controller: firstNameController,
-                validator: (val) => val!.isEmpty ? "Mettere Cognome Valido" : null,
-                decoration: const InputDecoration(hintText: "COGNOME"),
+                validator: (val) =>
+                    val!.isEmpty ? "Mettere Cognome Valido" : null,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.insert_emoticon_sharp),
+                  hintText: "COGNOME",
+                  labelText: 'Cognome',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    ),
+                  ),
+                ),
               ),
+              const SizedBox(height: 10),
               TextFormField(
+                enableSuggestions: true,
+                keyboardType: TextInputType.phone,
                 controller: mobileController,
-                validator: (val) => val!.isEmpty ? "Mettere Numero Telefono Valido" : null,
+                validator: (val) =>
+                    val!.isEmpty ? "Mettere Numero Telefono Valido" : null,
                 decoration: const InputDecoration(hintText: "TELEFONO"),
               ),
               TextFormField(
                 controller: emailController,
-                validator: (val) => val!.isEmpty ? "Mettere Email Valida" : null,
-                decoration: const InputDecoration(hintText: "EMAIL"),
+                validator: (val) =>
+                    val!.isEmpty ? "Mettere Email Valida" : null,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.email_outlined),
+                  hintText: "EMAIL",
+                  labelText: 'e-mail',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -133,8 +182,10 @@ class _HomePageUpdateState extends State<HomePageUpdate> {
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () => main(),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[300]),
-                child: const Text("Annulla e Torna Indietro", style: TextStyle(color: Colors.black)),
+                style:
+                    ElevatedButton.styleFrom(backgroundColor: Colors.grey[300]),
+                child: const Text("Annulla e Torna Indietro",
+                    style: TextStyle(color: Colors.black)),
               ),
             ],
           ),

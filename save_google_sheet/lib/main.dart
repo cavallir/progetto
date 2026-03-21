@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:save_google_sheet/classe_read.dart';  // Importa la logica di lettura
+import 'package:save_google_sheet/classe_read.dart'; // Importa la logica di lettura
 import 'package:save_google_sheet/classe_write.dart'; // Importa la logica di scrittura
-import 'package:save_google_sheet/feedback_form.dart';
-import 'controller.dart';
-import 'dart:convert' as convert;
-
 
 void main() => runApp(const MyApp());
 
@@ -41,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(title: Text(widget.title)), 
+      appBar: AppBar(title: Text(widget.title)),
       body: Form(
         key: _formKey,
         child: Container(
@@ -49,7 +45,7 @@ class _HomePageState extends State<HomePage> {
           child: ListView(
             children: <Widget>[
               const SizedBox(height: 20),
-              
+
               // PULSANTE PER ANDARE ALLA SCRITTURA
               ElevatedButton(
                 onPressed: () {
@@ -59,9 +55,9 @@ class _HomePageState extends State<HomePage> {
                 },
                 child: const Text("Send data"),
               ),
-              
+
               const SizedBox(height: 10),
-              
+
               // PULSANTE PER ANDARE ALLA LETTURA
               ElevatedButton(
                 onPressed: () {
