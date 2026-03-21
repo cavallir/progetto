@@ -157,8 +157,18 @@ class _HomePageUpdateState extends State<HomePageUpdate> {
                 controller: mobileController,
                 validator: (val) =>
                     val!.isEmpty ? "Mettere Numero Telefono Valido" : null,
-                decoration: const InputDecoration(hintText: "TELEFONO"),
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.import_contacts),
+                  hintText: "TELEFONO",
+                  labelText: 'Telefono',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    ),
+                  ),
+                ),
               ),
+              const SizedBox(height: 10),
               TextFormField(
                 controller: emailController,
                 validator: (val) =>
