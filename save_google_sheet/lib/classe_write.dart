@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:save_google_sheet/feedback_form.dart'; // Modello dati per il feedback
-import 'package:save_google_sheet/main.dart';         // Per tornare alla home principale
-import 'controller.dart';                            // Gestisce la logica di invio HTTP
-import 'dart:convert' as convert;                   // Per decodificare la risposta JSON del server
+import 'package:save_google_sheet/feedback_form.dart'; 
+import 'package:save_google_sheet/main.dart';         
+import 'controller.dart';                            
+import 'dart:convert' as convert;                   
 
-// Punto di ingresso per la funzionalità di scrittura
+// Punto di ingresso
 void classe_write() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
@@ -13,9 +13,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Write Data',
       theme: ThemeData(primarySwatch: Colors.lightGreen),
-      home: const HomePage(title: 'Write GoogleSheet'),
+      home: const HomePage(title: 'Inserimento GoogleSheet'),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -30,26 +30,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Chiavi globali per gestire la validazione del form e lo stato dello Scaffold
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // Controller per recuperare il testo digitato dall'utente nei vari campi
+  // Controller per i campi di testo
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
 
-  
-
-  // Funzione che raccoglie i dati e li invia al FormController
   void _submitForm(var cmd) {
-    // 1. Controlla se il form è valido (tutti i campi compilati correttamente)
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+      
+      // 1. Mostra un cerchio di caricamento per evitare doppi click
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator(color: Colors.lightGreen)),
+      );
 
-      
-      
-      // 2. Crea un oggetto FeedBackForm con i dati estratti dai controller
       FeedBackForm feedBackForm = FeedBackForm(
         lastNameController.text,
         firstNameController.text,
@@ -57,26 +56,25 @@ class _HomePageState extends State<HomePage> {
         emailController.text,
       );
 
-      
-
-      // 3. Inizializza il controller che gestirà la chiamata HTTP
       FormController formController = FormController((String response) {
-        
-        print(response);
-        // Decodifica lo stato della risposta
+        // 2. Chiudi il cerchio di caricamento appena arriva la risposta
+        Navigator.of(context, rootNavigator: true).pop();
 
+        print("Risposta Server: $response");
         var resp = convert.jsonDecode(response)['ans'];
-        //var resp = convert.jsonDecode(response)['status'];
-        if (resp == FormController.STATUS_SUCCESS) {
-          _showSnackBar("Feedback submitted"); // Successo
+
+        if (resp == "OK" || resp == FormController.STATUS_SUCCESS) {
+          // 3. Mostra Pop-up Successo
+          showFeedbackDialog(context, true).then((_) {
+            main(); // Torna alla home solo dopo il click su OK
+          });
         } else {
-          _showSnackBar("Error occured");      // Errore
+          // 3. Mostra Pop-up Errore
+          showFeedbackDialog(context, false);
         }
       });
 
-      _showSnackBar("Submitting Feedback");
-
-      // 4. Invia i dati: se cmd è null usa il metodo standard, altrimenti invia un comando specifico
+      // Esecuzione invio
       if (cmd == null) {
         formController.submitForm(feedBackForm);
       } else {
@@ -85,61 +83,71 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Mostra un messaggio temporaneo in basso (SnackBar)
-  _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(milliseconds: 300),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      appBar: AppBar(title: Text(widget.title)),
       body: Form(
-        key: _formKey, // Collega il form alla chiave per la validazione
+        key: _formKey,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
           child: ListView(
             children: <Widget>[
-              // Campo di input per il Nome
+              const SizedBox(height: 20),
+              
+              // NOME
               TextFormField(
                 controller: lastNameController,
+                keyboardType: TextInputType.name,
                 validator: (val) => val!.isEmpty ? "Mettere Nome Valido" : null,
-                decoration: const InputDecoration(hintText: "NOME"),
-              ),
-              // Campo di input per il Cognome
-              TextFormField(
-                controller: firstNameController,
-                validator: (val) => val!.isEmpty ? "Mettere Cognome Valido" : null,
-                decoration: const InputDecoration(hintText: "COGNOME"),
-              ),
-              // Campo di input per il Telefono
-              TextFormField(
-                controller: mobileController,
-                validator: (val) => val!.isEmpty ? "Mettere Numero Telefono Valido" : null,
-                decoration: const InputDecoration(hintText: "TELEFONO"),
-              ),
-              // Campo di input per l'Email
-              TextFormField(
-                controller: emailController,
-                validator: (val) => val!.isEmpty ? "Mettere Email Valida" : null,
-                decoration: const InputDecoration(hintText: "EMAIL"),
-              ),
-              const SizedBox(height: 20),
-              // Pulsante per inviare i dati
-              ElevatedButton(
-                onPressed: () => _submitForm('create'),
-                child: const Text("Send data"),
+                decoration: _buildInputDecoration("Nome", Icons.insert_emoticon_sharp, "NOME"),
               ),
               const SizedBox(height: 10),
-              // Pulsante per tornare al main principale
+
+              // COGNOME
+              TextFormField(
+                controller: firstNameController,
+                keyboardType: TextInputType.name,
+                validator: (val) => val!.isEmpty ? "Mettere Cognome Valido" : null,
+                decoration: _buildInputDecoration("Cognome", Icons.insert_emoticon_sharp, "COGNOME"),
+              ),
+              const SizedBox(height: 10),
+
+              // TELEFONO
+              TextFormField(
+                controller: mobileController,
+                keyboardType: TextInputType.phone,
+                validator: (val) => val!.isEmpty ? "Mettere Numero Telefono Valido" : null,
+                decoration: _buildInputDecoration("Telefono", Icons.import_contacts, "TELEFONO"),
+              ),
+              const SizedBox(height: 10),
+
+              // EMAIL
+              TextFormField(
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                validator: (val) => val!.isEmpty ? "Mettere Email Valida" : null,
+                decoration: _buildInputDecoration("e-mail", Icons.email_outlined, "EMAIL"),
+              ),
+              const SizedBox(height: 20),
+
+              // BOTTONE INVIA
+              ElevatedButton(
+                onPressed: () => _submitForm('create'),
+                style: ElevatedButton.styleFrom(minimumSize: const Size(100, 45)),
+                child: const Text("INVIA DATI"),
+              ),
+              const SizedBox(height: 10),
+
+              // BOTTONE ANNULLA
               ElevatedButton(
                 onPressed: () => main(),
-                child: const Text("Turn Back"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[300],
+                  minimumSize: const Size(100, 45),
+                ),
+                child: const Text("Annulla e Torna Indietro", style: TextStyle(color: Colors.black)),
               ),
             ],
           ),
@@ -147,4 +155,63 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  // Funzione helper per decorare i campi (per non ripetere codice)
+  InputDecoration _buildInputDecoration(String label, IconData icon, String hint) {
+    return InputDecoration(
+      prefixIcon: Icon(icon),
+      hintText: hint,
+      labelText: label,
+      border: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+      ),
+    );
+  }
+}
+
+// --- FUNZIONE POP-UP (Mettila in fondo al file) ---
+Future<void> showFeedbackDialog(BuildContext context, bool success) {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Text(
+          success ? 'Operazione Riuscita' : 'Errore!',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: success ? Colors.green : Colors.red,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              success ? Icons.check_circle_outline : Icons.error_outline,
+              size: 80.0,
+              color: success ? Colors.green : Colors.red,
+            ),
+            const SizedBox(height: 15),
+            Text(
+              success 
+                ? "I dati sono stati salvati correttamente." 
+                : "Impossibile inviare i dati.\nControlla la connessione.",
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          Center(
+            child: TextButton(
+              child: const Text('OK', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ],
+      );
+    },
+  );
 }
