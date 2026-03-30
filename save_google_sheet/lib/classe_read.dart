@@ -9,6 +9,8 @@ import 'costanti.dart'; // Qui si trova probabilmente la variabile 'URL' del Goo
 import 'comandi.dart'; // Classe che genera i parametri della query (es. ?action=read)
 import 'package:save_google_sheet/classe_update.dart';
 
+final _members = <dynamic>[];
+
 // Funzione di avvio specifica per questa visualizzazione
 void classe_read() {
   runApp(const MyApp());
@@ -41,7 +43,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // Lista dinamica che conterrà gli oggetti Member caricati dal web
-  final _members = <dynamic>[];
+  //final _members = <dynamic>[];
   final _biggerFont =
       const TextStyle(fontSize: 18.0); // Stile del testo per i dati
   final _members2 =
@@ -107,7 +109,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _loadData(); // Avvia il caricamento dei dati appena la pagina è pronta
+    if (_members.isEmpty) {
+      _loadData(); // Avvia il caricamento dei dati appena la pagina è pronta
+    }
   }
 
   // Costruisce la visualizzazione di una singola "cella" della lista

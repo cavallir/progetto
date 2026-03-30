@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:save_google_sheet/feedback_form.dart';
 import 'package:save_google_sheet/main.dart';
+import 'classe_read.dart';
 import 'controller.dart';
 import 'dart:convert' as convert;
 import 'dati/membro.dart'; // Importa il modello Member
@@ -58,8 +59,8 @@ class _HomePageUpdateState extends State<HomePageUpdate> {
       FeedBackForm feedBackForm = FeedBackForm(
         lastNameController.text,
         firstNameController.text,
-        mobileController.text,
         emailController.text,
+        mobileController.text,
       );
 
       FormController formController = FormController((String response) {
@@ -191,7 +192,8 @@ class _HomePageUpdateState extends State<HomePageUpdate> {
               ),
               const SizedBox(height: 10),
               ElevatedButton(
-                onPressed: () => main(),
+                //onPressed: () => main(),
+                onPressed: () => classe_read(),
                 style:
                     ElevatedButton.styleFrom(backgroundColor: Colors.grey[300]),
                 child: const Text("Annulla e Torna Indietro",
