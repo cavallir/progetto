@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:save_google_sheet/feedback_form.dart';
 import 'package:save_google_sheet/main.dart';
-import 'classe_read.dart';
+import 'package:save_google_sheet/classe_read.dart'; // Importante per accedere a 'members'
 import 'controller.dart';
 import 'dart:convert' as convert;
-import 'dati/membro.dart'; // Importa il modello Member
+import 'dati/membro.dart';
+import 'package:save_google_sheet/feedback_form.dart'; // <--- AGGIUNGI QUESTO
 
-// Funzione di avvio che riceve il membro da modificare
 void classe_update(Member membro) => runApp(UpdateApp(membro: membro));
 
 class UpdateApp extends StatelessWidget {
@@ -16,19 +15,16 @@ class UpdateApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Update Data',
-      theme: ThemeData(primarySwatch: Colors.lightGreen),
-      home: HomePageUpdate(title: 'Update GoogleSheet', membro: membro),
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.lightGreen),
+      home: HomePageUpdate(membro: membro),
     );
   }
 }
 
 class HomePageUpdate extends StatefulWidget {
-  final String title;
   final Member membro;
-  const HomePageUpdate({Key? key, required this.title, required this.membro})
-      : super(key: key);
+  const HomePageUpdate({Key? key, required this.membro}) : super(key: key);
 
   @override
   State<HomePageUpdate> createState() => _HomePageUpdateState();
@@ -36,172 +32,108 @@ class HomePageUpdate extends StatefulWidget {
 
 class _HomePageUpdateState extends State<HomePageUpdate> {
   final _formKey = GlobalKey<FormState>();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  // Controller
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController mobileController = TextEditingController();
+  late TextEditingController nomeController;
+  late TextEditingController cognomeController;
+  late TextEditingController emailController;
+  late TextEditingController phoneController;
 
   @override
   void initState() {
     super.initState();
-    // PRE-COMPILAZIONE DEI CAMPI con i dati ricevuti
-    lastNameController.text = widget.membro.nome;
-    firstNameController.text = widget.membro.cognome;
-    mobileController.text = widget.membro.telefono;
-    emailController.text = widget.membro.email;
+    // Inizializza i controller con i dati esistenti
+    nomeController = TextEditingController(text: widget.membro.nome);
+    cognomeController = TextEditingController(text: widget.membro.cognome);
+    emailController = TextEditingController(text: widget.membro.email);
+    phoneController = TextEditingController(text: widget.membro.telefono);
   }
 
   void _submitForm() {
-    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-      FeedBackForm feedBackForm = FeedBackForm(
-        lastNameController.text,
-        firstNameController.text,
+    if (_formKey.currentState!.validate()) {
+      // Mostra caricamento
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+
+      // Creiamo l'oggetto con i nuovi dati
+      // Attenzione: l'ordine dei parametri deve corrispondere al tuo FeedBackForm
+      var feedbackForm = FeedBackForm(
+        nomeController.text,
+        cognomeController.text,
+        phoneController.text, // Assicurati che l'ordine sia lo stesso del controller
         emailController.text,
-        mobileController.text,
       );
 
       FormController formController = FormController((String response) {
-        print(response);
+        Navigator.of(context).pop(); // Chiudi caricamento
+
         var resp = convert.jsonDecode(response)['ans'];
         if (resp == "OK") {
-          _showSnackBar("Dati Aggiornati!");
-          // Dopo un breve delay torna al main (o alla lista)
-          Future.delayed(const Duration(seconds: 1), () => main());
+          // --- LA MODIFICA CHE RISOLVE IL TUO PROBLEMA ---
+          members.clear(); // Svuota la lista globale
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Dati aggiornati con successo!")),
+          );
+          
+          // Torna alla lista dopo 1 secondo
+          Future.delayed(const Duration(seconds: 1), () => classe_read());
         } else {
-          _showSnackBar("Errore durante l'aggiornamento");
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Errore durante l'aggiornamento")),
+          );
         }
       });
 
-      _showSnackBar("Aggiornamento in corso...");
-
-      // COMANDO UPDATE con l'ID del membro
-      // Questo dice allo script: "Cerca questa riga e scrivi i nuovi dati"
-      String comandoUpdate = "update&id=${widget.membro.id}";
-      formController.submitCommandForm(feedBackForm, comandoUpdate);
+      formController.submitCommandForm(feedbackForm, "update&id=${widget.membro.id}");
     }
-  }
-
-  _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text(message), duration: const Duration(milliseconds: 800)),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(title: const Text("Modifica Membro")),
       body: Form(
         key: _formKey,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-          child: ListView(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(border: Border.all(width: 1)),
-                  child: Text(
-                    "Modifica ID: ${widget.membro.id}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                enableSuggestions: true,
-                keyboardType: TextInputType.name,
-                controller: lastNameController,
-                validator: (val) => val!.isEmpty ? "Mettere Nome Valido" : null,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.insert_emoticon_sharp),
-                  hintText: "NOME",
-                  labelText: 'Nome',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10.0),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                enableSuggestions: true,
-                keyboardType: TextInputType.name,
-                controller: firstNameController,
-                validator: (val) =>
-                    val!.isEmpty ? "Mettere Cognome Valido" : null,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.insert_emoticon_sharp),
-                  hintText: "COGNOME",
-                  labelText: 'Cognome',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10.0),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                enableSuggestions: true,
-                keyboardType: TextInputType.phone,
-                controller: mobileController,
-                validator: (val) =>
-                    val!.isEmpty ? "Mettere Numero Telefono Valido" : null,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.import_contacts),
-                  hintText: "TELEFONO",
-                  labelText: 'Telefono',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10.0),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: emailController,
-                validator: (val) =>
-                    val!.isEmpty ? "Mettere Email Valida" : null,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.email_outlined),
-                  hintText: "EMAIL",
-                  labelText: 'e-mail',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10.0),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text("AGGIORNA DATI"),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                //onPressed: () => main(),
-                onPressed: () => classe_read(),
-                style:
-                    ElevatedButton.styleFrom(backgroundColor: Colors.grey[300]),
-                child: const Text("Annulla e Torna Indietro",
-                    style: TextStyle(color: Colors.black)),
-              ),
-            ],
-          ),
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            Text("Modifica ID: ${widget.membro.id}", 
+                 style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+            const SizedBox(height: 20),
+            _buildField(nomeController, "Nome", Icons.person),
+            _buildField(cognomeController, "Cognome", Icons.person_outline),
+            _buildField(phoneController, "Telefono", Icons.phone, TextInputType.phone),
+            _buildField(emailController, "Email", Icons.email, TextInputType.emailAddress),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: _submitForm,
+              style: ElevatedButton.styleFrom(minimumSize: const Size(100, 50)),
+              child: const Text("SALVA MODIFICHE"),
+            ),
+            TextButton(
+              onPressed: () => classe_read(),
+              child: const Text("Annulla"),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildField(TextEditingController controller, String label, IconData icon, [TextInputType type = TextInputType.text]) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: type,
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          border: const OutlineInputBorder(),
+        ),
+        validator: (value) => value!.isEmpty ? "Campo obbligatorio" : null,
       ),
     );
   }
